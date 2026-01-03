@@ -1,6 +1,6 @@
 # TradeMaster: FinTech Trading Bot Core 🚀
 
-![Java](https://img.shields.io/badge/Java-17%2B-orange)
+![Java](https://img.shields.io/badge/Java-21%2B-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
 ![Redis](https://img.shields.io/badge/Redis-Caching-red)
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Event%20Driven-orange)
