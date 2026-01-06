@@ -32,7 +32,7 @@ The project is built using **Spring Boot 3** and follows a modular architecture:
 ### Phase 1: Infrastructure & Configuration (Current Focus) 🛠️
 - [x] Initialize Spring Boot Project with Dependencies (Web, JPA, Redis, RabbitMQ, Postgres).
 - [x] Create `docker-compose.yml` to spin up PostgreSQL, Redis, and RabbitMQ locally.
-- [ ] Configure `application.properties` to connect Spring Boot to Docker services.
+- [x] Configure `application.properties` to connect Spring Boot to Docker services.
 - [ ] Verify connectivity (Application starts without errors).
 
 ### Phase 2: Market Data Service 📈
