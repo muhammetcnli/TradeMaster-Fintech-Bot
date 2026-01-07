@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FintechCoreApplication {
+public class TrademasterFintechBotApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FintechCoreApplication.class, args);
+		SpringApplication.run(TrademasterFintechBotApplication.class, args);
 	}
 
 }
