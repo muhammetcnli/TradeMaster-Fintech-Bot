@@ -18,13 +18,11 @@ public class TestRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("--- YENİ API TESTİ BAŞLIYOR ---");
-
-        // 1. Kripto Testi (CoinGecko)
+        
         BigDecimal btcPrice = priceService.getLatestPrice("BTC");
         System.out.println("Bitcoin Fiyatı (CoinGecko): $" + btcPrice);
 
-        // 2. Erasmus Testi (Frankfurter API)
-        // EURPLN sembolü göndereceğiz
+
         BigDecimal zlotyPrice = priceService.getLatestPrice("EURPLN");
         System.out.println("1 Euro kaç Zloty (Frankfurter): " + zlotyPrice);
 
