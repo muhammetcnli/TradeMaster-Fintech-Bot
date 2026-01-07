@@ -22,15 +22,14 @@ public class CryptoForexService implements PriceService {
 
     @Override
     public BigDecimal getLatestPrice(String symbol) {
-        // Sembolü büyük harfe çevir
         String upperSymbol = symbol.toUpperCase(Locale.ROOT);
 
         if (upperSymbol.contains("BTC") || upperSymbol.contains("ETH")) {
-            return getCryptoPrice("bitcoin"); // Şimdilik sadece BTC, sonra geliştiririz
+            return getCryptoPrice("bitcoin");
         } else if (upperSymbol.length() == 6) {
-            // EURPLN gibi 6 karakterliyse Forex varsayalım
-            String from = upperSymbol.substring(0, 3); // EUR
-            String to = upperSymbol.substring(3);      // PLN
+
+            String from = upperSymbol.substring(0, 3);
+            String to = upperSymbol.substring(3);
             return getForexPrice(from, to);
         }
 

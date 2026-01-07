@@ -18,7 +18,7 @@ public class TestRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("--- YENİ API TESTİ BAŞLIYOR ---");
-        
+
         BigDecimal btcPrice = priceService.getLatestPrice("BTC");
         System.out.println("Bitcoin Fiyatı (CoinGecko): $" + btcPrice);
 
