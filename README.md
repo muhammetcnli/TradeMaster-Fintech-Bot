@@ -1,16 +1,16 @@
-# TradeMaster: FinTech Trading Bot Core 🚀
+# TradeMaster: FinTech Trading Bot Core 
 
 ![Java](https://img.shields.io/badge/Java-21%2B-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
 ![Redis](https://img.shields.io/badge/Redis-Caching-red)
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Event%20Driven-orange)
 
-## 📖 Overview
+## Overview
 **TradeMaster** is a high-performance, event-driven backend simulation of a real-time stock trading platform. Designed with a **Microservices mindset**, this project aims to demonstrate core FinTech concepts such as **low-latency data processing**, **transactional integrity (ACID)**, and **asynchronous messaging**.
 
 The system fetches real-time market data, caches it for high availability, manages user portfolios with strict transactional safety, and delivers asynchronous price alerts via a Telegram Bot interface.
 
-## 🏗 Architecture & Tech Stack
+## Architecture & Tech Stack
 The project is built using **Spring Boot 3** and follows a modular architecture:
 
 * **Core Backend:** Java 17, Spring Boot (Web, Data JPA).
@@ -19,7 +19,7 @@ The project is built using **Spring Boot 3** and follows a modular architecture:
 * **Message Broker:** RabbitMQ (Decoupling the notification system from the trading engine).
 * **Containerization:** Docker & Docker Compose.
 
-## ⚡ Key Features (Planned)
+## Key Features (Planned)
 - **Real-time Market Data:** Fetches and caches stock prices (Yahoo Finance API wrapper).
 - **Trading Engine:** Buy/Sell orders with transactional balance checks.
 - **Portfolio Management:** Real-time P/L (Profit/Loss) calculation.
@@ -33,12 +33,12 @@ The project is built using **Spring Boot 3** and follows a modular architecture:
 - [x] Initialize Spring Boot Project with Dependencies (Web, JPA, Redis, RabbitMQ, Postgres).
 - [x] Create `docker-compose.yml` to spin up PostgreSQL, Redis, and RabbitMQ locally.
 - [x] Configure `application.properties` to connect Spring Boot to Docker services.
-- [ ] Verify connectivity (Application starts without errors).
+- [X] Verify connectivity (Application starts without errors).
 
 ### Phase 2: Market Data Service 📈
-- [ ] Integrate an external Finance API (Yahoo Finance or Alpha Vantage).
+- [X] Integrate an external Finance API (CoinGecko and Frankfurt API).
 - [ ] Implement **Redis Caching**: Cache stock prices to serve `<10ms` responses.
-- [ ] Create a Scheduler to update prices periodically (e.g., every 10 seconds).
+- [ ] Give response to the desired user request
 
 ### Phase 3: Core Trading Logic 💰
 - [ ] Design Database Schema (`Users`, `Portfolio`, `Transactions`).
@@ -55,10 +55,10 @@ The project is built using **Spring Boot 3** and follows a modular architecture:
 ## 🚀 Getting Started (How to Run)
 
 ### Prerequisites
-- Java 17+
+- Java 21+
 - Docker & Docker Compose
 
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/yourusername/trademaster-fintech-bot.git](https://github.com/yourusername/trademaster-fintech-bot.git)
+   git clone
