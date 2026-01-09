@@ -38,7 +38,7 @@ The project is built using **Spring Boot 3** and follows a modular architecture:
 ### Phase 2: Market Data Service 📈
 - [X] Integrate an external Finance API (CoinGecko and Frankfurt API).
 - [ ] Implement **Redis Caching**: Cache stock prices to serve `<10ms` responses.
-- [ ] Give response to the desired user request
+- [x] Give response to the desired user request
 
 ### Phase 3: Core Trading Logic 💰
 - [ ] Design Database Schema (`Users`, `Portfolio`, `Transactions`).
