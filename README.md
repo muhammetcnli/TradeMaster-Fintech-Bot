@@ -41,7 +41,7 @@ The project is built using **Spring Boot 3** and follows a modular architecture:
 - [x] Give response to the desired user request
 
 ### Phase 3: Core Trading Logic 💰
-- [ ] Design Database Schema (`Users`, `Portfolio`, `Transactions`).
+- [x] Design Database Schema (`Users`, `Portfolio`, `Transactions`).
 - [ ] Implement `BuyService` and `SellService` with **@Transactional**.
 - [ ] Ensure atomic updates (prevent negative balance or double spending).
 
