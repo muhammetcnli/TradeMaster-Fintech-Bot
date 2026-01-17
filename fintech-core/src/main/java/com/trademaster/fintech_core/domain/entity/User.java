@@ -1,10 +1,11 @@
-package com.trademaster.fintech_core.model;
+package com.trademaster.fintech_core.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -12,8 +13,8 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "chat_id", unique = true, nullable = false)
     private Long chatId;
@@ -30,4 +31,7 @@ public class User {
     @CreationTimestamp
     @Column(name = "registered_at", updatable = true)
     private LocalDateTime registeredAt;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 }
