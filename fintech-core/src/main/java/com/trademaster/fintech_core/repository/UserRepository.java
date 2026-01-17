@@ -1,6 +1,6 @@
 package com.trademaster.fintech_core.repository;
 
-import com.trademaster.fintech_core.model.User;
+import com.trademaster.fintech_core.domain.entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
