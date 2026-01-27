@@ -1,14 +1,13 @@
 package com.trademaster.fintech_core.repository;
 
-import com.trademaster.fintech_core.domain.entity.User;
+import com.trademaster.fintech_core.domain.entity.Asset;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface AssetRepository extends JpaRepository<Asset, Long> {
 
-    Optional<User> findByChatId(Long chatId);
+    Optional<Asset> findBySymbol(String symbol);
 }
