@@ -1,7 +1,11 @@
 package com.trademaster.fintech_core.domain.entity;
 
+import com.trademaster.fintech_core.domain.AssetType;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,11 +23,13 @@ public class Asset {
     @Column(name = "name")
     private String name;
 
-    private enum type
-    {
-        STOCK, CRYPTO, FOREX
-    };
+    @Enumerated(EnumType.STRING)
+    @Column(name = "asset_type", nullable = false) // <--- 'name =' KISMI ŞARTTIR
+    private AssetType type;
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @OneToMany(mappedBy = "asset")
+    private Set<UserAsset> followedBy = new HashSet<>();
 }
