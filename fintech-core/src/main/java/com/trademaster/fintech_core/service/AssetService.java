@@ -1,5 +1,6 @@
 package com.trademaster.fintech_core.service;
 
+import com.trademaster.fintech_core.domain.AssetType;
 import com.trademaster.fintech_core.domain.entity.Asset;
 import com.trademaster.fintech_core.repository.AssetRepository;
 import jakarta.transaction.Transactional;
@@ -30,8 +31,17 @@ public class AssetService {
         newAsset.setSymbol(upperSymbol);
         newAsset.setName(upperSymbol);
 
+        // handle type field
         if(upperSymbol.length() == 6 && !upperSymbol.contains("BTC") && !upperSymbol.contains("ETH")){
-            newAsset.setType();
+            newAsset.setType(AssetType.FOREX);
+        } else if ( upperSymbol.length() == 3){
+            newAsset.setType(AssetType.CRYPTO);
+        } else {
+            newAsset.setType(AssetType.STOCK);
         }
+
+        newAsset.setIsActive(true);
+
+        return newAsset;
     }
 }
