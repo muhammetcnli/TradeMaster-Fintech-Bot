@@ -24,7 +24,7 @@ public class Asset {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "asset_type", nullable = false) // <--- 'name =' KISMI ŞARTTIR
+    @Column(name = "asset_type", nullable = false)
     private AssetType type;
 
     @Column(name = "is_active")
