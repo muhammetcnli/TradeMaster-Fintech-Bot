@@ -28,8 +28,12 @@ public class UserAsset {
 
     // To enable many-to-many relationship between user and asset
 
-    @Column(name = "entity_price")
-    private BigDecimal entityPrice;
+    // add quantity with scale 8 and precision 19
+    @Column(name = "quantity", precision = 19, scale = 8)
+    private BigDecimal quantity = BigDecimal.ZERO;
+
+    @Column(name = "average_buy_price", precision = 19, scale = 4)
+    private BigDecimal averageBuyPrice = BigDecimal.ZERO;
 
     @Column(name = "alert_enabled")
     private boolean alertEnabled;
