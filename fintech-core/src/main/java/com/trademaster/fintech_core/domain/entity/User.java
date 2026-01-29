@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +37,10 @@ public class User {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    // add balance in usd, give 100.000 USD as starting promotion.
+    @Column(name = "usd_balance", precision = 19, scale = 4)
+    private BigDecimal usdBalance = new BigDecimal("100000.0");
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserAsset> portfolio = new HashSet<>();
