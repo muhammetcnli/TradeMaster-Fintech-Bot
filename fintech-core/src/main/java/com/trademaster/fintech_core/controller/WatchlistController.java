@@ -35,6 +35,7 @@ public class WatchlistController {
     public ResponseEntity<?> buyAsset(UUID userId, String symbol, @PathVariable BigDecimal quantity){
          userAssetService.buyAsset(userId, symbol, quantity);
 
+         //
         return ResponseEntity.ok("Bought.");
     }
 
