@@ -2,7 +2,10 @@ package com.trademaster.fintech_core.domain.entity;
 
 import com.trademaster.fintech_core.domain.AssetType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +13,9 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "asset")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Asset {
 
     @Id
