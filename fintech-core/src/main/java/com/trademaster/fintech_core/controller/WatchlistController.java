@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,44 +21,47 @@ public class WatchlistController {
 
     private final UserAssetService userAssetService;
 
-
-
-    // add asset to the watchlist method, alert on certain values or percentage changes
-
+    /**
+     * Adds a symbol to the user watchlist.
+     * It enables alerts by default.
+     */
     @GetMapping("/add")
-    public ResponseEntity<?> addToWatchlist(UUID userId,String symbol){
-        // alert enabled, quantity 0,
+    public ResponseEntity<?> addToWatchlist(@RequestParam UUID userId, @RequestParam String symbol){
         userAssetService.addAssetToWatchlist(userId, symbol);
 
         return ResponseEntity.ok("Added to the watchlist.");
     }
 
+    /**
+     * Buys a quantity of an asset for the user.
+     * It uses a simple response body for now.
+     */
     @GetMapping("/buy/{quantity}")
-    public ResponseEntity<?> buyAsset(UUID userId, String symbol, @PathVariable BigDecimal quantity){
-         userAssetService.buyAsset(userId, symbol, quantity);
+    public ResponseEntity<?> buyAsset(@RequestParam UUID userId, @RequestParam String symbol, @PathVariable BigDecimal quantity){
+        userAssetService.buyAsset(userId, symbol, quantity);
 
-         // TODO: implement DTO's
         return ResponseEntity.ok("Bought.");
     }
 
+    /**
+     * Sells a quantity of an asset for the user.
+     * It uses a simple response body for now.
+     */
     @GetMapping("/sell/{quantity}")
-    public ResponseEntity<?> sellAsset(String userId, String symbol, @PathVariable BigDecimal quantity){
+    public ResponseEntity<?> sellAsset(@RequestParam UUID userId, @RequestParam String symbol, @PathVariable BigDecimal quantity){
 
         userAssetService.sellAsset(userId, symbol, quantity);
 
         return ResponseEntity.ok("Sold.");
     }
 
+    /**
+     * Returns the assets for the user portfolio.
+     * This list does not include quantities yet.
+     */
     @GetMapping("/portfolio")
-    public List<Asset> getPortfolio(UUID userId){
+    public List<Asset> getPortfolio(@RequestParam UUID userId){
 
-        return userAssetService.getUserAssests(userId);
+        return userAssetService.getUserAssets(userId);
     }
-    // see my assets method
-
-
-    public
-    // update asset method, change alert value or percentage
-
-    //
 }
