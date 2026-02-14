@@ -15,14 +15,15 @@ public class AssetService {
 
     private final AssetRepository assetRepository;
 
+    /**
+     * Finds an asset by symbol or creates and saves it.
+     * It also sets a basic asset type based on the symbol format.
+     */
     @Transactional
     public Asset findOrCreateAsset(String symbol){
         String upperSymbol = symbol.toUpperCase();
 
-        // check database for existing asset
-        Optional<Asset> existingAsset = assetRepository.findBySymbol(symbol);
-
-        // asset exists return the asset
+        Optional<Asset> existingAsset = assetRepository.findBySymbol(upperSymbol);
         if (existingAsset.isPresent()){
             return existingAsset.get();
         }
@@ -31,10 +32,9 @@ public class AssetService {
         newAsset.setSymbol(upperSymbol);
         newAsset.setName(upperSymbol);
 
-        // handle type field
-        if(upperSymbol.length() == 6 && !upperSymbol.contains("BTC") && !upperSymbol.contains("ETH")){
+        if (upperSymbol.length() == 6 && !upperSymbol.contains("BTC") && !upperSymbol.contains("ETH")){
             newAsset.setType(AssetType.FOREX);
-        } else if ( upperSymbol.length() == 3){
+        } else if (upperSymbol.length() == 3){
             newAsset.setType(AssetType.CRYPTO);
         } else {
             newAsset.setType(AssetType.STOCK);
@@ -42,6 +42,6 @@ public class AssetService {
 
         newAsset.setIsActive(true);
 
-        return newAsset;
+        return assetRepository.save(newAsset);
     }
 }
