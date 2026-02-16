@@ -1,64 +1,44 @@
-# TradeMaster: FinTech Trading Bot Core 
+# TradeMaster: FinTech Trading Bot Core
 
-![Java](https://img.shields.io/badge/Java-21%2B-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
-![Redis](https://img.shields.io/badge/Redis-Caching-red)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Event%20Driven-orange)
+![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-Caching-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Container-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## Overview
-**TradeMaster** is a high-performance, event-driven backend simulation of a real-time stock trading platform. Designed with a **Microservices mindset**, this project aims to demonstrate core FinTech concepts such as **low-latency data processing**, **transactional integrity (ACID)**, and **asynchronous messaging**.
+## Project Overview
+TradeMaster is a high-performance, event-driven backend simulation designed for real-time stock trading. The core objective of the project is to demonstrate critical FinTech concepts, including low-latency data processing, transactional integrity (ACID), and asynchronous messaging systems.
 
-The system fetches real-time market data, caches it for high availability, manages user portfolios with strict transactional safety, and delivers asynchronous price alerts via a Telegram Bot interface.
+The system architecture focuses on fetching real-time market data, ensuring high availability through caching, and managing user portfolios with strict data consistency.
 
-## Architecture & Tech Stack
-The project is built using **Spring Boot 3** and follows a modular architecture:
+## Architecture and Tech Stack
+The project is built on a modular Spring Boot 3 architecture, emphasizing scalability and maintainability:
 
-* **Core Backend:** Java 17, Spring Boot (Web, Data JPA).
-* **Database:** PostgreSQL (Persisting user wallets, transactions, and portfolio data).
-* **Caching layer:** Redis (Handling high-frequency market data to reduce DB load).
-* **Message Broker:** RabbitMQ (Decoupling the notification system from the trading engine).
-* **Containerization:** Docker & Docker Compose.
+* **Backend Framework:** Java 21, Spring Boot (Web, Data JPA).
+* **Persistence Layer:** PostgreSQL for managing user wallets, historical transactions, and portfolio data.
+* **Performance Layer:** Redis serves as a high-speed caching mechanism to deliver market data with sub-10ms latency.
+* **Messaging:** RabbitMQ facilitates an event-driven notification system, decoupling price alerts from the main trading engine.
+* **Infrastructure:** Docker and Docker Compose for standardized environment orchestration.
 
-## Key Features (Planned)
-- **Real-time Market Data:** Fetches and caches stock prices (Yahoo Finance API wrapper).
-- **Trading Engine:** Buy/Sell orders with transactional balance checks.
-- **Portfolio Management:** Real-time P/L (Profit/Loss) calculation.
-- **Price Alerts:** Users set targets; system fires async notifications via Telegram.
+## Technical Implementation Details
+* **Market Data Synchronization:** Integrated with external finance APIs (CoinGecko & Frankfurt) to provide real-time updates supported by a Redis caching strategy.
+* **Transactional Trading Engine:** Implementation of `@Transactional` boundaries to ensure atomic operations, preventing race conditions such as double spending or negative balance updates.
+* **Asynchronous Alert System:** An event-driven architecture using RabbitMQ to process price targets and trigger notifications without impacting core system performance.
+* **Scalable Data Modeling:** Relational database schema optimized for portfolio tracking and real-time profit/loss calculations.
 
----
+## Project Structure
+The development follows a phased engineering approach:
+1. **Infrastructure:** Standardized Docker configurations for PostgreSQL, Redis, and RabbitMQ.
+2. **Data Integration:** Service layer implementation for external API consumption and cache-aside pattern with Redis.
+3. **Core Logic:** Development of robust Buy/Sell services with enforced business rules and data integrity checks.
+4. **Event Processing:** Integration of message brokers for scalable user notification workflows.
 
-## 🗺️ Development Roadmap & To-Do
-
-### Phase 1: Infrastructure & Configuration (Current Focus) 🛠️
-- [x] Initialize Spring Boot Project with Dependencies (Web, JPA, Redis, RabbitMQ, Postgres).
-- [x] Create `docker-compose.yml` to spin up PostgreSQL, Redis, and RabbitMQ locally.
-- [x] Configure `application.properties` to connect Spring Boot to Docker services.
-- [X] Verify connectivity (Application starts without errors).
-
-### Phase 2: Market Data Service 📈
-- [X] Integrate an external Finance API (CoinGecko and Frankfurt API).
-- [x] Implement **Redis Caching**: Cache stock prices to serve `<10ms` responses.
-- [x] Give response to the desired user request
-
-### Phase 3: Core Trading Logic 💰
-- [x] Design Database Schema (`Users`, `Portfolio`, `Transactions`).
-- [x] Implement `BuyService` and `SellService` with **@Transactional**.
-- [x] Ensure atomic updates (prevent negative balance or double spending).
-
-### Phase 4: Notification System 🔔
-- [ ] Set up **RabbitMQ** exchanges and queues (`price.alert.queue`).
-- [ ] Create a Producer that sends an event when a price target is hit.
-- [ ] Create a Consumer (Telegram Bot) that listens to the queue and messages the user.
-
----
-
-## 🚀 Getting Started (How to Run)
+## Getting Started
 
 ### Prerequisites
-- Java 21+
-- Docker & Docker Compose
+* Java 21 or higher
+* Docker Desktop
 
-### Installation
+### Installation and Execution
 1. Clone the repository:
    ```bash
-   git clone
+   git clone [https://github.com/muhammetcnli/TradeMaster-Fintech-Bot](https://github.com/muhammetcnli/TradeMaster-Fintech-Bot)
