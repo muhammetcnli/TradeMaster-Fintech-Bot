@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.1</version>
+		<version>4.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.trademaster</groupId>
 	<artifactId>fintech-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>trademaster-fintech-bot</name>
-	<description>Real-time trading bot with Spring Boot</description>
+	<name>fintech-core</name>
+	<description>TradeMaster Fintech Bot backend</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -49,7 +49,7 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-docker-compose</artifactId>
+			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
@@ -83,16 +83,6 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots-spring-boot-starter</artifactId>
-            <version>6.7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots-abilities</artifactId>
-            <version>6.7.0</version>
-        </dependency>
 	</dependencies>
 
 	<build>
