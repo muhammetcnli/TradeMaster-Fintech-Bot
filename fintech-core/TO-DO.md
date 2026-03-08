@@ -22,7 +22,7 @@
     - Add method: `registerOrLogin(String provider, String externalId, String username)`
     - Logic: Check if user exists with provider+externalId.
         - If yes: return user UUID.
-        - If no: create new user with 100.000 TL balance and return UUID.
+        - If no: create new user with 100.000 USD balance and return UUID.
 - [ ] Create `MarketDataService` (External API Integration).
     - Set up `RestTemplate` or `WebClient`.
     - Add method: `getCurrentPrice(String symbol)`
