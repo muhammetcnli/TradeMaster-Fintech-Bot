@@ -1,33 +1,36 @@
 package com.trademaster.fintech_core.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "user_asset")
 public class UserAsset {
+
     @Id
-    @GeneratedValue
-    @org.hibernate.annotations.UuidGenerator
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    // add many-to-one relation with user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "asset_id", referencedColumnName = "id")
+    // add many-to-one relation with asset
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_id", nullable = false)
     private Asset asset;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 8)
     private BigDecimal quantity;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 4)
     private BigDecimal averageCost;
 }
