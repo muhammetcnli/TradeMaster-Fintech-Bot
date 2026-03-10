@@ -13,6 +13,8 @@ public class PortfolioDto {
     private UUID userId;
     private String username;
     private BigDecimal currentBalance;
-    private List<AssetItemDto> assets;
     private BigDecimal totalPortfolioValue;
+
+    private List<AssetItemDto> assets;
+    private List<WatchListDto> watchlist;
 }
