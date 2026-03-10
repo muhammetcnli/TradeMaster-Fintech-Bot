@@ -3,6 +3,7 @@ package com.trademaster.fintech_core.service;
 import com.trademaster.fintech_core.dto.AssetItemDto;
 import com.trademaster.fintech_core.dto.MarketPriceDto;
 import com.trademaster.fintech_core.dto.PortfolioDto;
+import com.trademaster.fintech_core.dto.WatchListDto;
 import com.trademaster.fintech_core.entity.Asset;
 import com.trademaster.fintech_core.entity.User;
 import com.trademaster.fintech_core.entity.UserAsset;
@@ -45,7 +46,7 @@ public class PortfolioService {
     /**
      *
      * @param userId
-     * Finds user,
+     * Finds user, get asset's
      * @return PortfolioDto
      */
     public PortfolioDto getUserPortfolio(UUID userId){
@@ -82,5 +83,12 @@ public class PortfolioService {
                 .totalPortfolioValue(calcTotalPortfolioValue(user.getBalance(),assets))
                 .userId(userId)
                 .build();
+    }
+
+    public WatchListDto watchAsset(UUID userId, String symbol){
+        // get User
+        User user = userService.getUserById(userId);
+
+
     }
 }
