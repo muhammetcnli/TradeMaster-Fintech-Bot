@@ -1,12 +1,11 @@
 package com.trademaster.fintech_core.service;
 
-import com.trademaster.fintech_core.dto.AssetItemDto;
-import com.trademaster.fintech_core.dto.MarketPriceDto;
-import com.trademaster.fintech_core.dto.PortfolioDto;
-import com.trademaster.fintech_core.dto.WatchListDto;
+import com.trademaster.fintech_core.dto.*;
 import com.trademaster.fintech_core.entity.Asset;
 import com.trademaster.fintech_core.entity.User;
 import com.trademaster.fintech_core.entity.UserAsset;
+import com.trademaster.fintech_core.repository.AssetRepository;
+import com.trademaster.fintech_core.repository.UserAssetRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,10 +16,15 @@ import java.util.UUID;
 public class PortfolioService {
 
     private final MarketDataService marketDataService;
-    private UserService userService;
+    private final UserService userService;
+    private final AssetRepository assetRepository;
+    private final UserAssetRepository userAssetRepository;
 
-    public PortfolioService(MarketDataService marketDataService) {
+    public PortfolioService(MarketDataService marketDataService, UserService userService, AssetRepository assetRepository, UserAssetRepository userAssetRepository) {
         this.marketDataService = marketDataService;
+        this.userService = userService;
+        this.assetRepository = assetRepository;
+        this.userAssetRepository = userAssetRepository;
     }
 
     private BigDecimal calculatePnL(BigDecimal averageCost, BigDecimal currentPrice){
@@ -85,11 +89,59 @@ public class PortfolioService {
                 .build();
     }
 
+    // Make sure these:
+    // Checks if the asset exists, if not gets one with symbol
+    // check's if user watches this asset or not
+    // if not, watches the asset
+    //
     public WatchListDto watchAsset(UUID userId, String symbol){
-        // get User
+
+        // check if symbol null
+        if (symbol == null || symbol.isBlank()){
+            throw new IllegalAccessException("Symbol cannot be blank");
+        }
+
+        // normalize symbol
+        String normalized = symbol.trim().toUpperCase();
+
+        // get user
         User user = userService.getUserById(userId);
 
+        // Get asset of create new one
+        Asset asset = assetRepository.findBySymbol(normalized)
+                .orElseGet(() -> assetRepository.save(
+                        Asset.builder()
+                                .symbol(normalized)
+                                .name(normalized)
+                                .assetType(AssetType.CRYPTO)
+                                .build()
+                ));
 
-        
+        // get existing watchItem or return null
+        UserAsset existing = userAssetRepository.findByUserIdAndAsset_Symbol(userId, normalized)
+                .orElse(null);
+
+        // if watchItem not exists, create one and save to UserAssetRepository instance
+        if (existing == null){
+            UserAsset watchItem = UserAsset.builder()
+                    .asset(asset)
+                    .user(user)
+                    .quantity(BigDecimal.ZERO)
+                    .averageCost(BigDecimal.ZERO)
+                    .build();
+
+            userAssetRepository.save(watchItem);
+        }
+
+        BigDecimal currentPrice = marketDataService.getCurrentPrice(normalized).getPrice();
+
+        return WatchListDto.builder()
+                .symbol(normalized)
+                .currentPrice(currentPrice)
+                .targetPrice(null)
+                .isAlertEnabled(false)
+                .trend("UNKNOWN")
+                .build();
+
     }
 }
