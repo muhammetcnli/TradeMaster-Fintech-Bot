@@ -18,6 +18,12 @@ public class UserAsset {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false, precision = 19, scale = 8)
+    private BigDecimal quantity;
+
+    @Column(nullable = false, precision = 19, scale = 4)
+    private BigDecimal averageCost;
+
     // add many-to-one relation with user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -27,10 +33,4 @@ public class UserAsset {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asset_id", nullable = false)
     private Asset asset;
-
-    @Column(nullable = false, precision = 19, scale = 8)
-    private BigDecimal quantity;
-
-    @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal averageCost;
 }
