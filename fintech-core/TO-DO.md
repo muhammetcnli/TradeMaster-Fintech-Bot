@@ -4,20 +4,20 @@
 - [x] Create `User` entity.
 - [x] Create `Asset` entity.
 - [x] Create `UserAsset` entity.
-- [ ] Create `Transaction` entity.
+- [x] Create `Transaction` entity.
   - Fields: `id`, `user`, `asset`, `type` (BUY/SELL/WATCH), `quantity`, `price`, `timestamp`.
 
 ## Data Access (Repositories)
 - [x] Create `UserRepository`.
 - [x] Create `AssetRepository`.
 - [x] Create `UserAssetRepository`.
-- [ ] Create `TransactionRepository`.
+- [x] Create `TransactionRepository`.
   - Method: `List<Transaction> findAllByUserId(UUID userId)`.
 
 ## Core Services (Business Logic)
 - [x] Create `AuthService`.
 - [x] Create `MarketDataService`.
-- [ ] Create `PortfolioService` (The Core Engine).
+- [x] Create `PortfolioService` (The Core Engine).
   - **`getPortfolio(UUID userId)`**: Kullanıcının sahip olduğu tüm `UserAsset` listesini ve toplam USD değerini döner.
   - **`buyAsset(UUID userId, String symbol, BigDecimal quantity)`**:
     1. Güncel fiyatı `MarketDataService`'den al.
@@ -36,6 +36,6 @@
 - [x] Create `MarketController`.
 
 ## Telegram & Integration
-- [ ] Create `TelegramBotService`.
+- [x] Create `TelegramBotService`.
   - Telegram'dan gelen `/start` mesajında `AuthService.registerOrLogin` metodunu tetikle.
   - `/price BTC` veya `/buy BTC 0.5` komutlarını işle.
