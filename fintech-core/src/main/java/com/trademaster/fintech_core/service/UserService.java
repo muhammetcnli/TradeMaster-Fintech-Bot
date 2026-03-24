@@ -2,16 +2,16 @@ package com.trademaster.fintech_core.service;
 
 import com.trademaster.fintech_core.entity.User;
 import com.trademaster.fintech_core.repository.UserRepository;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public User getUserById(UUID uuid){
         return userRepository.findById(uuid)
