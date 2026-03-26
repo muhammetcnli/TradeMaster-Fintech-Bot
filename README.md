@@ -5,40 +5,154 @@
 ![Redis](https://img.shields.io/badge/Redis-Caching-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Container-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## Project Overview
-TradeMaster is a high-performance, event-driven backend simulation designed for real-time stock trading. The core objective of the project is to demonstrate critical FinTech concepts, including low-latency data processing, transactional integrity (ACID), and asynchronous messaging systems.
+TradeMaster is a Spring Boot backend for a Telegram-first trading simulation bot.
+It supports user login/linking, real-time market price queries, watchlist tracking, buy/sell operations, and rule-based alert/auto-trade flows.
 
-The system architecture focuses on fetching real-time market data, ensuring high availability through caching, and managing user portfolios with strict data consistency.
+## Current MVP Status
 
-## Architecture and Tech Stack
-The project is built on a modular Spring Boot 3 architecture, emphasizing scalability and maintainability:
+Implemented in the current codebase:
 
-* **Backend Framework:** Java 21, Spring Boot (Web, Data JPA).
-* **Persistence Layer:** PostgreSQL for managing user wallets, historical transactions, and portfolio data.
-* **Performance Layer:** Redis serves as a high-speed caching mechanism to deliver market data with sub-10ms latency.
-* **Messaging:** RabbitMQ facilitates an event-driven notification system, decoupling price alerts from the main trading engine.
-* **Infrastructure:** Docker and Docker Compose for standardized environment orchestration.
+- User identity flow via `POST /api/v1/auth/login` and Telegram `/start`
+- Price fetching with provider routing by asset type (`CRYPTO`, `STOCK`, `FIAT`)
+- Portfolio engine: buy/sell, average cost, PnL, balance updates, transaction logging
+- Watchlist support (`/watch`, `/watchlist`) on Telegram and REST
+- Telegram webhook endpoint with secret token header validation
+- Scheduled evaluation for in-memory alerts and one-shot auto-trade rules
 
-## Technical Implementation Details
-* **Market Data Synchronization:** Integrated with external finance APIs (CoinGecko & Frankfurt) to provide real-time updates supported by a Redis caching strategy.
-* **Transactional Trading Engine:** Implementation of `@Transactional` boundaries to ensure atomic operations, preventing race conditions such as double spending or negative balance updates.
-* **Asynchronous Alert System:** An event-driven architecture using RabbitMQ to process price targets and trigger notifications without impacting core system performance.
-* **Scalable Data Modeling:** Relational database schema optimized for portfolio tracking and real-time profit/loss calculations.
+## Tech Stack
 
-## Project Structure
-The development follows a phased engineering approach:
-1. **Infrastructure:** Standardized Docker configurations for PostgreSQL, Redis, and RabbitMQ.
-2. **Data Integration:** Service layer implementation for external API consumption and cache-aside pattern with Redis.
-3. **Core Logic:** Development of robust Buy/Sell services with enforced business rules and data integrity checks.
-4. **Event Processing:** Integration of message brokers for scalable user notification workflows.
+- Java 21
+- Spring Boot (`webmvc`, `data-jpa`, `data-redis`, `amqp`)
+- PostgreSQL
+- Redis
+- RabbitMQ (configured in properties for upcoming async flows)
+- External APIs: CoinGecko, Alpha Vantage, Frankfurter
 
-## Getting Started
+## Architecture Notes
 
-### Prerequisites
-* Java 21 or higher
-* Docker Desktop
+- `PortfolioService` handles core transactional trading logic with `@Transactional`
+- `MarketDataService` dispatches requests to provider-specific clients by `AssetType`
+- Telegram commands are processed in `TelegramBotService`
+- Webhook security is enforced in `TelegramWebhookController` using `X-Telegram-Bot-Api-Secret-Token`
 
-### Installation and Execution
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/muhammetcnli/TradeMaster-Fintech-Bot](https://github.com/muhammetcnli/TradeMaster-Fintech-Bot)
+## API Endpoints
+
+### Auth
+- `POST /api/v1/auth/login`
+
+### Market
+- `GET /api/v1/market/price/{symbol}`
+- Optional query: `assetType=CRYPTO|STOCK|FIAT`
+
+### Portfolio
+- `GET /api/v1/portfolio/{id}`
+- `POST /api/v1/portfolio/watch/`
+- `POST /api/v1/portfolio/assets/{symbol}/buy`
+- `POST /api/v1/portfolio/assets/{symbol}/sell`
+
+### Telegram
+- `POST /api/v1/telegram/webhook`
+
+## Telegram Commands
+
+- `/start`
+- `/price BTC`
+- `/watch BTC`
+- `/watchlist`
+- `/portfolio`
+- `/buy BTC 0.1`
+- `/sell BTC 0.1`
+- `/alert BTC 80000 UP`
+- `/autobuy BTC 70000 0.01`
+- `/autosell BTC 90000 0.01`
+- `/rules`
+
+## Configuration
+
+Application loads optional `.env` values with:
+
+`spring.config.import=optional:file:.env[.properties]`
+
+Create `.env` in project root:
+
+```env
+TELEGRAM_BOT_USERNAME=your_bot_username
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_WEBHOOK_SECRET=your_webhook_secret
+
+COINGECKO_API_KEY=
+ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
+```
+
+Default infra values from `src/main/resources/application.properties`:
+
+- PostgreSQL: `localhost:5432/fintechdb` (`user` / `password`)
+- Redis: `localhost:6379`
+- RabbitMQ: `localhost:5672` (`user` / `password`)
+
+## Local Run
+
+### 1) Start infra services
+
+If you do not have a compose file in this repo yet, run containers manually:
+
+```powershell
+docker run -d --name tm-postgres -e POSTGRES_DB=fintechdb -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -p 5432:5432 postgres:16
+docker run -d --name tm-redis -p 6379:6379 redis:7
+docker run -d --name tm-rabbitmq -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
+### 2) Run the app
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+App base URL: `http://localhost:8080`
+
+## Telegram Webhook Setup
+
+Expose local app (for example using ngrok):
+
+```powershell
+.\ngrok\ngrok.exe http 8080
+```
+
+Set webhook with secret token:
+
+```powershell
+$botToken = "<TELEGRAM_BOT_TOKEN>"
+$publicUrl = "https://<your-ngrok-domain>"
+$secret = "<TELEGRAM_WEBHOOK_SECRET>"
+$uri = "https://api.telegram.org/bot$botToken/setWebhook?url=$publicUrl/api/v1/telegram/webhook&secret_token=$secret"
+Invoke-RestMethod -Method Post -Uri $uri
+```
+
+Quick local verification:
+
+- Wrong secret header should return `403 Forbidden`
+- Correct secret header should return `200 OK`
+
+## Testing
+
+Run tests:
+
+```powershell
+.\mvnw.cmd test
+```
+
+Current tests include:
+
+- `TelegramWebhookControllerTest` (secret validation behavior)
+- `FintechCoreApplicationTests` (context boot)
+
+## Roadmap (Near-Term)
+
+- Persist alerts/auto-trade rules in DB (instead of in-memory maps)
+- Add richer Telegram notifications for watchlist triggers
+- Improve integration and service-level test coverage
+- Add production-ready deployment manifests (compose/k8s)
+
+## Repository
+
+- GitHub: `https://github.com/muhammetcnli/TradeMaster-Fintech-Bot`
