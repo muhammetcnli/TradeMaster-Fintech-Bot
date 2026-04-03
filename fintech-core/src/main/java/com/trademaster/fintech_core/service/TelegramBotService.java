@@ -77,6 +77,7 @@ public class TelegramBotService {
         }
     }
 
+    
     private void handleStart(Long chatId, TelegramUpdateDto update) {
         UUID userId = resolveUserId(chatId, update);
         userChatIndex.put(userId, chatId);
