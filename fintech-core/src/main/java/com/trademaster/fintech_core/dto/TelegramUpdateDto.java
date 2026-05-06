@@ -20,6 +20,7 @@ public class TelegramUpdateDto {
 
     @Data
     public static class From {
+        private Long id;
         private String username;
     }
 }
