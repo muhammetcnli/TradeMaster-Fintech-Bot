@@ -30,6 +30,7 @@ public class Asset {
     @Column(nullable = false)
     private String name;
 
+    @Builder.Default
     @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL)
     private List<UserAsset> userHoldings = new ArrayList<>();
 }
