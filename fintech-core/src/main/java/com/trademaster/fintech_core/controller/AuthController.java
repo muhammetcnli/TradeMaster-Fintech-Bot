@@ -1,10 +1,8 @@
 package com.trademaster.fintech_core.controller;
 
+import com.trademaster.fintech_core.dto.AuthResponse;
 import com.trademaster.fintech_core.service.AuthService;
-import lombok.Data;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -16,14 +14,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public UUID login(@RequestBody AuthRequest request) {
-        return authService.registerOrLogin(request.getProvider(), request.getExternalId(), request.getUsername());
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        return authService.registerOrLogin(request.provider, request.externalId, request.username);
     }
 
-    @Data
     public static class AuthRequest {
-        private String provider;
-        private String externalId;
-        private String username;
+        public String provider;
+        public String externalId;
+        public String username;
     }
 }
