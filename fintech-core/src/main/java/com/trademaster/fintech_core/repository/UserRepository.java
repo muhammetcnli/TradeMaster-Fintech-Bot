@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByAuthProviderAndExternalId(String provider, String externalId);
+
+    Optional<User> findBySessionTokenHash(String sessionTokenHash);
 }
