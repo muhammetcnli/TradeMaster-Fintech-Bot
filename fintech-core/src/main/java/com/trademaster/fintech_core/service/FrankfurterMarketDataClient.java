@@ -68,10 +68,22 @@ public class FrankfurterMarketDataClient implements MarketDataClient {
         }
     }
 
+    /**
+     * Normalize FX symbol.
+     * - 6-letter input (e.g., USDTRY, EURPLN) → used as-is
+     * - 3-letter input (e.g., PLN, TRY, EUR) → paired with USD (e.g., PLNUSD)
+     */
     private String normalizeFxSymbol(String symbol) {
         String normalized = symbol.toUpperCase().replace("/", "").replace("-", "").trim();
+
+        // Single currency code → pair with USD
+        if (normalized.length() == 3) {
+            normalized = normalized + "USD";
+        }
+
         if (normalized.length() != 6) {
-            throw new IllegalArgumentException("FIAT symbol must be in 6-letter format, e.g. USDTRY or EURUSD");
+            throw new IllegalArgumentException(
+                    "FIAT symbol must be 3-letter (e.g., PLN) or 6-letter pair (e.g., USDTRY). Got: " + symbol);
         }
         return normalized;
     }
