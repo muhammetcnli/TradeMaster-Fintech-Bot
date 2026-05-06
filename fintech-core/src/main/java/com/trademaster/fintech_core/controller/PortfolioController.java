@@ -5,6 +5,7 @@ import com.trademaster.fintech_core.dto.TradeRequest;
 import com.trademaster.fintech_core.dto.WatchListDto;
 import com.trademaster.fintech_core.dto.WatchRequest;
 import com.trademaster.fintech_core.service.PortfolioService;
+import com.trademaster.fintech_core.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,33 +18,34 @@ import java.util.UUID;
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
+    private final CurrentUserService currentUserService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PortfolioDto> getUserPortfolio(@PathVariable UUID id){
-            // get User portfolio from service
-            PortfolioDto portfolioDto = portfolioService.getUserPortfolio(id);
-
-            // return ok response
+    @GetMapping("/me")
+    public ResponseEntity<PortfolioDto> getUserPortfolio() {
+            UUID userId = currentUserService.requireCurrentUserId();
+            PortfolioDto portfolioDto = portfolioService.getUserPortfolio(userId);
             return ResponseEntity.ok(portfolioDto);
     }
 
-    @PostMapping("/watch/")
+    @PostMapping("/watch")
     public ResponseEntity<WatchListDto> watchAsset(@RequestBody WatchRequest request) throws IllegalAccessException {
-
-        return ResponseEntity.ok(portfolioService.watchAsset(request.getUserId(), request.getSymbol()));
+        UUID userId = currentUserService.requireCurrentUserId();
+        return ResponseEntity.ok(portfolioService.watchAsset(userId, request.getSymbol()));
 
     }
 
     @PostMapping("/assets/{symbol}/buy")
     public ResponseEntity<PortfolioDto> buyAsset(@PathVariable String symbol,
                                                  @RequestBody TradeRequest request) throws IllegalAccessException {
-        return ResponseEntity.ok(portfolioService.buyAsset(request.getUserId(), symbol, request.getQuantity()));
+        UUID userId = currentUserService.requireCurrentUserId();
+        return ResponseEntity.ok(portfolioService.buyAsset(userId, symbol, request.getQuantity()));
     }
 
     @PostMapping("/assets/{symbol}/sell")
     public ResponseEntity<PortfolioDto> sellAsset(@PathVariable String symbol,
                                                   @RequestBody TradeRequest request) throws IllegalAccessException {
-        return ResponseEntity.ok(portfolioService.sellAsset(request.getUserId(), symbol, request.getQuantity()));
+        UUID userId = currentUserService.requireCurrentUserId();
+        return ResponseEntity.ok(portfolioService.sellAsset(userId, symbol, request.getQuantity()));
     }
 
 }
