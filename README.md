@@ -159,9 +159,9 @@ Forwarding    https://abc123.ngrok.io -> http://localhost:8080
 Aşağıdaki komutu çalıştır (agora adımdan URL'yi kopyala):
 
 ```powershell
-$botToken = "8555245412:AAEJway6-6WodhE4Lq_wqGd9shmKsfd4r7U"  # .env dosyasından kopyala
+$botToken = ""  # .env dosyasından kopyala
 $publicUrl = "https://abc123.ngrok.io"                          # ngrok URL'sini kopyala
-$secret = "a04e1708211c1b2b3c815fcbd199fae31381984b97c40c8c57b4638f0ec41f7b"  # .env WEBHOOK_SECRET
+$secret = ""  # .env WEBHOOK_SECRET
 
 $uri = "https://api.telegram.org/bot$botToken/setWebhook?url=$publicUrl/api/v1/telegram/webhook&secret_token=$secret"
 
