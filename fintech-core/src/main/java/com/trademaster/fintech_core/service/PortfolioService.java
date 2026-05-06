@@ -276,7 +276,7 @@ public class PortfolioService {
                         Asset.builder()
                                 .symbol(normalizedSymbol)
                                 .name(normalizedSymbol)
-                                .assetType(AssetType.CRYPTO)
+                                .assetType(marketDataService.detectAssetType(normalizedSymbol))
                                 .build()
                 ));
     }
