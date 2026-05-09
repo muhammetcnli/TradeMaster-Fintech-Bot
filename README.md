@@ -6,22 +6,20 @@
 [![Redis](https://img.shields.io/badge/Redis-Caching-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 [![Docker](https://img.shields.io/badge/Docker-Container-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
+![TradeMaster Fintech Bot](./fintech-core/src/main/resources/static/TradeMaster-Fintech-Bot.png)
+
 TradeMaster is a high-performance, production-ready Spring Boot application that powers a Telegram-first trading simulation bot. It offers a seamless bridge between real-time market data and automated trading strategies.
 
 ---
 
-## 🤖 Try it Live!
+## Try it Live!
 You can interact with the bot directly on Telegram:
-👉 **[@TradeMasterFintechBot](https://t.me/TradeMasterFintechBot)**
+ **[@TradeMasterFintechBot](https://t.me/TradeMasterFintechBot)**
+
 
 ---
 
-## 📸 Project Showcase
-![TradeMaster Fintech Bot](./fintech-core/src/main/resources/static/TradeMaster-Fintech-Bot.png)
-
----
-
-## ✨ Key Features
+## Key Features
 
 - **🛡️ Production Hardening**: Built with structured logging (MDC), input validation, and secure webhook handling.
 - **📈 Multi-Asset Support**: Real-time price tracking for **Crypto**, **Stocks**, and **Fiat** currencies.
