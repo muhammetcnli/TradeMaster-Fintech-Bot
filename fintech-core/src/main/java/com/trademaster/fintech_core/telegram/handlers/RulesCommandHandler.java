@@ -3,15 +3,11 @@ package com.trademaster.fintech_core.telegram.handlers;
 import com.trademaster.fintech_core.dto.TelegramUpdateDto;
 import com.trademaster.fintech_core.entity.User;
 import com.trademaster.fintech_core.service.AlertService;
-import com.trademaster.fintech_core.service.AlertService.PriceAlert;
-import com.trademaster.fintech_core.service.AlertService.AutoTradeRule;
 import com.trademaster.fintech_core.telegram.CommandHandler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -27,25 +23,34 @@ public class RulesCommandHandler implements CommandHandler {
 
     @Override
     public String handle(User user, TelegramUpdateDto update, String[] args) {
-        Map<String, PriceAlert> alerts = alertService.getUserAlerts(user.getId());
-        Map<String, AutoTradeRule> rules = alertService.getUserAutoTradeRules(user.getId());
+        var alerts = alertService.getActiveAlerts(user.getId());
+        var rules = alertService.getActiveAutoTradeRules(user.getId());
 
         if (alerts.isEmpty() && rules.isEmpty()) {
-            return "No alerts or auto-trade rules set.";
+            return "📭 " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.italic("No active alerts or auto-trade rules found.");
         }
 
-        StringBuilder sb = new StringBuilder("Active Rules\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append("📋 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Your Active Rules")).append("\n\n");
 
-        alerts.values().forEach(a ->
-                sb.append("ALERT ").append(a.getSymbol()).append(" ")
-                  .append(a.getDirection()).append(" ").append(a.getTargetPrice())
-                  .append(a.isTriggered() ? " [triggered]" : "").append("\n"));
+        if (!alerts.isEmpty()) {
+            sb.append("🔔 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Price Alerts")).append("\n");
+            for (var alert : alerts) {
+                sb.append("• ").append(alert.getSymbol()).append(": ")
+                  .append(alert.getType().toString().replace("PRICE_", ""))
+                  .append(" ").append(alert.getTargetValue()).append("\n");
+            }
+            sb.append("\n");
+        }
 
-        rules.values().forEach(r ->
-                sb.append("AUTO ").append(r.getAction()).append(" ")
-                  .append(r.getSymbol()).append(" target=").append(r.getTargetPrice())
-                  .append(" qty=").append(r.getQuantity())
-                  .append(" active=").append(r.isActive()).append("\n"));
+        if (!rules.isEmpty()) {
+            sb.append("🤖 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Auto-Trades")).append("\n");
+            for (var rule : rules) {
+                sb.append("• ").append(rule.getAction()).append(" ")
+                  .append(rule.getSymbol()).append(" at ").append(rule.getTargetPrice())
+                  .append(" (Qty: ").append(rule.getQuantity()).append(")\n");
+            }
+        }
 
         return sb.toString().trim();
     }

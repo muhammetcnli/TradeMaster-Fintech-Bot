@@ -28,33 +28,29 @@ public class PortfolioCommandHandler implements CommandHandler {
 
     @Override
     public String handle(User user, TelegramUpdateDto update, String[] args) {
-        logger.debug("Fetching portfolio for user: {}", user.getUsername());
+        logger.info("Fetching portfolio for user: {}", user.getUsername());
 
-        try {
-            PortfolioDto portfolio = portfolioService.getUserPortfolio(user.getId());
+        PortfolioDto portfolio = portfolioService.getUserPortfolio(user.getId());
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("📊 Portfolio Summary\n");
-            sb.append("━━━━━━━━━━━━━━━━━\n");
-            sb.append(String.format("💵 Balance: $%s\n", portfolio.getCurrentBalance()));
-            sb.append(String.format("📈 Total Value: $%s\n", portfolio.getTotalPortfolioValue()));
-            sb.append(String.format("🗂 Assets: %d\n", portfolio.getAssets().size()));
+        StringBuilder sb = new StringBuilder();
+        sb.append("📊 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Portfolio Summary")).append("\n");
+        sb.append("━━━━━━━━━━━━━━━━━\n");
+        sb.append("💵 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Balance:")).append(" $").append(portfolio.getCurrentBalance()).append("\n");
+        sb.append("📈 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Total Value:")).append(" $").append(portfolio.getTotalPortfolioValue()).append("\n");
+        sb.append("🗂 Assets: ").append(portfolio.getAssets().size()).append("\n");
 
-            if (!portfolio.getAssets().isEmpty()) {
-                sb.append("\nHoldings:\n");
-                portfolio.getAssets().forEach(asset ->
-                        sb.append(String.format("  • %s: %s @ $%s (PnL: %s%%)\n",
-                                asset.getSymbol(),
-                                asset.getQuantity(),
-                                asset.getCurrentPrice(),
-                                asset.getProfitLossPercentage()))
-                );
-            }
-
-            return sb.toString().trim();
-        } catch (Exception ex) {
-            logger.error("Error fetching portfolio for {}: {}", user.getUsername(), ex.getMessage());
-            return "❌ Error fetching portfolio: " + ex.getMessage();
+        if (!portfolio.getAssets().isEmpty()) {
+            sb.append("\n").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.italic("Holdings:")).append("\n");
+            portfolio.getAssets().forEach(asset ->
+                    sb.append("  • ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold(asset.getSymbol())).append(": ")
+                      .append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.code(asset.getQuantity().toString()))
+                      .append(" @ $").append(asset.getCurrentPrice())
+                      .append(" (PnL: ").append(asset.getProfitLossPercentage()).append("%)\n")
+            );
+        } else {
+            sb.append("\n_No assets found in your portfolio._");
         }
+
+        return sb.toString().trim();
     }
 }

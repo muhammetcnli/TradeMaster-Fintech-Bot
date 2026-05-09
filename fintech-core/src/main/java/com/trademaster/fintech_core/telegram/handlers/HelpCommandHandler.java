@@ -15,27 +15,27 @@ public class HelpCommandHandler implements CommandHandler {
 
     @Override
     public String handle(User user, TelegramUpdateDto update, String[] args) {
-        return """
-                🚀 TradeMaster Bot Commands
-                ━━━━━━━━━━━━━━━━━
-                /start - Link account & get REST token
-                /help - Show this message
-                
-                📈 Market Data (Auto-detects Crypto/Stock/Fiat)
-                /price <symbol> - e.g. /price BTC, /price AAPL, /price PLN
-                
-                💰 Trading & Portfolio
-                /portfolio - View your balance and assets
-                /buy <symbol> <qty> - Buy asset (e.g. /buy BTC 0.1, /buy PLN 100)
-                /sell <symbol> <qty> - Sell asset
-                /watch <symbol> - Add to watchlist
-                /watchlist - View your watchlist
-                
-                🤖 Automation & Rules
-                /alert <symbol> <price> [UP|DOWN] - Price alerts
-                /autobuy <symbol> <price> <qty> - Auto-execute buy
-                /autosell <symbol> <price> <qty> - Auto-execute sell
-                /rules - View all active alerts and rules
-                """;
+        return "🚀 " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("TradeMaster Bot Commands") + "\n" +
+               "━━━━━━━━━━━━━━━━━\n" +
+               "/start - Link account & get main menu\n" +
+               "/help - Show this message\n\n" +
+
+               "📈 " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Market Data") + "\n" +
+               "/price " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("<symbol>") + " - Get current price\n\n" +
+
+               "💰 " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Trading & Portfolio") + "\n" +
+               "/portfolio - View balance & holdings\n" +
+               "/buy " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("<symbol> <qty>") + " - Buy asset\n" +
+               "/sell " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("<symbol> <qty>") + " - Sell asset\n\n" +
+
+               "🔔 " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Alerts & Automation") + "\n" +
+               "/alert " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("<symbol> <target>") + " - Price or % alert\n" +
+               "  └ Ex: /alert BTC 90000\n" +
+               "  └ Ex: /alert ETH +5%\n" +
+               "/alerts - List your active alerts\n" +
+               "/delalert " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("<id>") + " - Delete an alert\n" +
+               "/autobuy " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("<symbol> <price> <qty>") + " - Auto buy\n" +
+               "/autosell " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("<symbol> <price> <qty>") + " - Auto sell\n" +
+               "/rules - View all active rules";
     }
 }

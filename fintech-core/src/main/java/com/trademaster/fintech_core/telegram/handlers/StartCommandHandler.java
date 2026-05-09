@@ -32,32 +32,25 @@ public class StartCommandHandler implements CommandHandler {
     public String handle(User user, TelegramUpdateDto update, String[] args) {
         logger.info("Handling /start for user: {} (telegram_id: {})", user.getUsername(), user.getExternalId());
 
-        try {
-            // User already exists (passed from middleware), just generate token
-            String token = generateNewToken(user);
+        // User already exists (passed from middleware), just generate token
+        String token = generateNewToken(user);
 
-            String response = String.format(
-                    "Welcome back! Your account is linked securely with this Telegram chat.\n\n" +
-                    "REST access token: `%s`\n\n" +
-                    "Keep this token private. Use it as:\n" +
-                    "```\n" +
-                    "Authorization: Bearer %s\n" +
-                    "```\n\n" +
-                    "Available commands:\n" +
-                    "/price BTC - Get current price\n" +
-                    "/portfolio - View your portfolio\n" +
-                    "/watch BTC - Add to watchlist\n" +
-                    "/help - Show all commands",
-                    token, token
-            );
+        StringBuilder sb = new StringBuilder();
+        sb.append("👋 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Welcome to TradeMaster!"))
+          .append("\n\n")
+          .append("Your account is linked securely with this Telegram chat.\n\n")
+          .append("🔑 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("REST Access Token:"))
+          .append("\n")
+          .append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.code(token))
+          .append("\n\n")
+          .append("💡 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.italic("Keep this token private."))
+          .append(" Use it as:\n")
+          .append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.codeBlock("", "Authorization: Bearer " + token))
+          .append("\n")
+          .append("Use the menu below to navigate or type /help for commands.");
 
-            logger.info("/start completed for userId: {}", user.getId());
-            return response;
-
-        } catch (Exception ex) {
-            logger.error("Error in /start handler", ex);
-            return "❌ Error: " + ex.getMessage();
-        }
+        logger.info("/start completed for userId: {}", user.getId());
+        return sb.toString();
     }
 
     /**

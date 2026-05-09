@@ -29,35 +29,33 @@ public class PriceCommandHandler implements CommandHandler {
     @Override
     public String handle(User user, TelegramUpdateDto update, String[] args) {
         if (args.length < 1) {
-            return "Usage: /price <symbol> [CRYPTO|STOCK|FIAT]\nExamples:\n  /price BTC\n  /price AAPL STOCK\n  /price PLN\n  /price USDTRY FIAT";
+            return "❌ " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Usage:") + " " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("/price <symbol> [CRYPTO|STOCK|FIAT]") + 
+                   "\n\nExample: " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("/price BTC");
         }
 
         String symbol = args[0].trim().toUpperCase();
 
-        // Optional explicit asset type override
         com.trademaster.fintech_core.dto.AssetType assetType = null;
         if (args.length >= 2) {
             try {
                 assetType = com.trademaster.fintech_core.dto.AssetType.valueOf(args[1].trim().toUpperCase());
             } catch (IllegalArgumentException ex) {
-                return "❌ Invalid asset type: " + args[1] + ". Use CRYPTO, STOCK, or FIAT.";
+                return "⚠️ Invalid asset type: " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code(args[1]) + ". Use CRYPTO, STOCK, or FIAT.";
             }
         }
 
-        logger.debug("Fetching price for {} (type: {}, user: {})", symbol,
-                assetType != null ? assetType : "auto-detect", user.getUsername());
+        logger.info("Price check: {} by user {}", symbol, user.getUsername());
 
-        try {
-            MarketPriceDto price = assetType != null
-                    ? marketDataService.getCurrentPrice(symbol, assetType)
-                    : marketDataService.getCurrentPrice(symbol);
+        MarketPriceDto price = assetType != null
+                ? marketDataService.getCurrentPrice(symbol, assetType)
+                : marketDataService.getCurrentPrice(symbol);
 
-            return String.format("💰 %s = %s %s\n📊 Type: %s | Provider: %s",
-                    symbol, price.getPrice(), price.getCurrency(),
-                    price.getAssetType(), price.getProvider());
-        } catch (Exception ex) {
-            logger.error("Error fetching price for {}: {}", symbol, ex.getMessage());
-            return "❌ Could not fetch price for " + symbol + ": " + ex.getMessage();
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("💰 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold(symbol)).append(" Price\n\n")
+          .append("💵 ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold(price.getPrice().toString())).append(" ").append(price.getCurrency()).append("\n")
+          .append("📊 Type: ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.italic(price.getAssetType().toString())).append("\n")
+          .append("🏢 Provider: ").append(com.trademaster.fintech_core.telegram.util.TelegramFormatter.code(price.getProvider()));
+
+        return sb.toString();
     }
 }

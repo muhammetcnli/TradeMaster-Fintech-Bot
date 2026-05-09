@@ -34,21 +34,22 @@ public class BuyCommandHandler implements CommandHandler {
         }
 
         String symbol = args[0].trim().toUpperCase();
-        BigDecimal quantity;
-        try {
-            quantity = new BigDecimal(args[1]);
-        } catch (NumberFormatException ex) {
-            return "❌ Invalid quantity: " + args[1];
-        }
-
-        logger.debug("Buy {} {} for user {}", quantity, symbol, user.getUsername());
+        String qtyStr = args[1].trim();
 
         try {
+            com.trademaster.fintech_core.telegram.util.TelegramValidator.validateSymbol(symbol);
+            com.trademaster.fintech_core.telegram.util.TelegramValidator.validateNumeric(qtyStr, "Quantity");
+            BigDecimal quantity = new BigDecimal(qtyStr);
+
+            logger.debug("Buy {} {} for user {}", quantity, symbol, user.getUsername());
+
             portfolioService.buyAsset(user.getId(), symbol, quantity);
-            return String.format("✅ Bought %s %s successfully!", quantity, symbol);
+            return "✅ " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Purchase Successful!") + "\n" +
+                   "Asset: " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code(symbol) + "\n" +
+                   "Quantity: " + quantity;
         } catch (Exception ex) {
-            logger.error("Buy failed for {} {}: {}", symbol, quantity, ex.getMessage());
-            return "❌ Buy failed: " + ex.getMessage();
+            logger.error("Buy failed for {}: {}", symbol, ex.getMessage());
+            return "❌ " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Transaction Failed") + "\n" + ex.getMessage();
         }
     }
 }
