@@ -3,7 +3,6 @@ package com.trademaster.fintech_core.telegram.handlers;
 import com.trademaster.fintech_core.dto.TelegramUpdateDto;
 import com.trademaster.fintech_core.entity.User;
 import com.trademaster.fintech_core.service.AlertService;
-import com.trademaster.fintech_core.service.AlertService.TradeAction;
 import com.trademaster.fintech_core.telegram.CommandHandler;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -31,28 +30,31 @@ public class AutoBuyCommandHandler implements CommandHandler {
     @Override
     public String handle(User user, TelegramUpdateDto update, String[] args) {
         if (args.length < 3) {
-            return "Usage: /autobuy <symbol> <targetPrice> <quantity>\nExample: /autobuy BTC 70000 0.01";
+            return "❌ " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Usage:") + "\n" +
+                   com.trademaster.fintech_core.telegram.util.TelegramFormatter.code("/autobuy <symbol> <targetPrice> <quantity>");
         }
 
         String symbol = args[0].trim().toUpperCase();
+        String priceStr = args[1].trim();
+        String qtyStr = args[2].trim();
 
-        BigDecimal targetPrice;
         try {
-            targetPrice = new BigDecimal(args[1]);
-        } catch (NumberFormatException ex) {
-            return "❌ Invalid target price: " + args[1];
+            com.trademaster.fintech_core.telegram.util.TelegramValidator.validateSymbol(symbol);
+            com.trademaster.fintech_core.telegram.util.TelegramValidator.validateNumeric(priceStr, "Price");
+            com.trademaster.fintech_core.telegram.util.TelegramValidator.validateNumeric(qtyStr, "Quantity");
+            
+            BigDecimal targetPrice = new BigDecimal(priceStr);
+            BigDecimal quantity = new BigDecimal(qtyStr);
+
+            alertService.addAutoTradeRule(user.getId(), symbol, targetPrice, quantity, 
+                                        com.trademaster.fintech_core.entity.AutoTradeRule.TradeAction.BUY);
+            
+            return "🤖 " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Auto-Buy Set!") + "\n" +
+                   "Asset: " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.code(symbol) + "\n" +
+                   "Target Price: " + targetPrice + "\n" +
+                   "Quantity: " + quantity;
+        } catch (Exception ex) {
+            return "❌ Error: " + ex.getMessage();
         }
-
-        BigDecimal quantity;
-        try {
-            quantity = new BigDecimal(args[2]);
-        } catch (NumberFormatException ex) {
-            return "❌ Invalid quantity: " + args[2];
-        }
-
-        logger.debug("AutoBuy set for user {}: {} {} at {}", user.getUsername(), symbol, quantity, targetPrice);
-
-        alertService.addAutoTradeRule(user.getId(), symbol, targetPrice, quantity, TradeAction.BUY);
-        return String.format("🤖 Auto BUY set: %s when price <= $%s, qty=%s", symbol, targetPrice, quantity);
     }
 }
