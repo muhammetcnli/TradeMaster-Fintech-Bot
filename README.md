@@ -1,4 +1,4 @@
-# 🚀 TradeMaster: Production-Grade Fintech Trading Bot
+# TradeMaster: Production-Grade Fintech Trading Bot
 
 [![Java](https://img.shields.io/badge/Java-21%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
@@ -6,33 +6,32 @@
 [![Redis](https://img.shields.io/badge/Redis-Caching-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 [![Docker](https://img.shields.io/badge/Docker-Container-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
-![TradeMaster Fintech Bot](./fintech-core/src/main/resources/static/TradeMaster-Fintech-Bot.png)
+<img src="./fintech-core/src/main/resources/static/TradeMaster-Fintech-Bot.webp" width="800" alt="TradeMaster Fintech Bot">
 
 TradeMaster is a high-performance, production-ready Spring Boot application that powers a Telegram-first trading simulation bot. It offers a seamless bridge between real-time market data and automated trading strategies.
 
 ---
 
-## Try it Live!
+## Try it Live
 You can interact with the bot directly on Telegram:
- **[@TradeMasterFintechBot](https://t.me/TradeMasterFintechBot)**
-
+**[@TradeMasterFintechBot](https://t.me/TradeMasterFintechBot)**
 
 ---
 
 ## Key Features
 
-- **🛡️ Production Hardening**: Built with structured logging (MDC), input validation, and secure webhook handling.
-- **📈 Multi-Asset Support**: Real-time price tracking for **Crypto**, **Stocks**, and **Fiat** currencies.
-- **🔔 Persistent Alert System**: 
+- **Production Hardening**: Built with structured logging (MDC), input validation, and secure webhook handling.
+- **Multi-Asset Support**: Real-time price tracking for Crypto, Stocks, and Fiat currencies.
+- **Persistent Alert System**: 
   - Price-based (Above/Below) and Percentage-based (+5%, -10%) alerts.
   - Alarms survive application restarts (PostgreSQL backed).
-- **🤖 Automated Trading**: Set `/autobuy` or `/autosell` rules to execute trades at specific price targets automatically.
-- **💰 Portfolio Management**: Real-time balance tracking, PnL calculations, and transaction history.
-- **📱 Rich UI**: Interactive Telegram menus with emojis and structured HTML formatting.
+- **Automated Trading**: Set /autobuy or /autosell rules to execute trades at specific price targets automatically.
+- **Portfolio Management**: Real-time balance tracking, PnL calculations, and transaction history.
+- **Rich UI**: Interactive Telegram menus with structured HTML formatting.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Backend**: Java 21, Spring Boot 3.2
 - **Data Persistence**: PostgreSQL (JPA/Hibernate)
@@ -42,7 +41,7 @@ You can interact with the bot directly on Telegram:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Prerequisites
 - Docker & Docker Compose
@@ -64,7 +63,7 @@ Launch the entire stack (App, PostgreSQL, Redis) with a single command:
 docker-compose up -d --build
 ```
 
-### 4. GitHub Codespaces Deployment (Public Endpoint)
+### 4. GitHub Codespaces Deployment
 If you are running this in GitHub Codespaces:
 1. Go to the **Ports** tab in your terminal area.
 2. Find port `8080`, right-click on "Visibility", and change it to **Public**.
@@ -74,7 +73,7 @@ If you are running this in GitHub Codespaces:
 
 ---
 
-## 📟 Telegram Commands
+## Telegram Commands
 
 | Command | Description |
 | :--- | :--- |
@@ -91,22 +90,22 @@ If you are running this in GitHub Codespaces:
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 The project follows a modular and clean architecture:
-- **`TelegramBotService`**: Routing layer for incoming updates.
-- **`CommandDispatcher`**: Extensible command processing logic.
-- **`MarketDataService`**: Smart routing for multiple data providers.
-- **`AlertService`**: Background scheduler for rule evaluation and notification.
+- **TelegramBotService**: Routing layer for incoming updates.
+- **CommandDispatcher**: Extensible command processing logic.
+- **MarketDataService**: Smart routing for multiple data providers.
+- **AlertService**: Background scheduler for rule evaluation and notification.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
