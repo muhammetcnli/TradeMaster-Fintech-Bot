@@ -10,11 +10,14 @@ TradeMaster is a high-performance, production-ready Spring Boot application that
 
 ---
 
-## 📸 Bot Preview
+## 🤖 Try it Live!
+You can interact with the bot directly on Telegram:
+👉 **[@TradeMasterFintechBot](https://t.me/TradeMasterFintechBot)**
 
-| Main Menu | Market Price | Alerts & Rules |
-| :---: | :---: | :---: |
-| ![Main Menu](https://via.placeholder.com/250x450?text=Main+Menu+Screenshot) | ![Price Check](https://via.placeholder.com/250x450?text=Price+Check+Screenshot) | ![Alerts](https://via.placeholder.com/250x450?text=Alerts+Screenshot) |
+---
+
+## 📸 Project Showcase
+![TradeMaster Fintech Bot](./fintech-core/src/main/resources/static/TradeMaster-Fintech-Bot.png)
 
 ---
 
