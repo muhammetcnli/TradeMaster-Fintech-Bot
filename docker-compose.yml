@@ -35,6 +35,29 @@ services:
     networks:
       - trademaster-network
 
+  # TradeMaster Backend
+  app:
+    build:
+      context: ./fintech-core
+      dockerfile: Dockerfile
+    container_name: trademaster-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./fintech-core/.env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/fintechdb
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATA_REDIS_HOST=redis
+    networks:
+      - trademaster-network
+
 volumes:
   postgres_data:
   redis_data:
