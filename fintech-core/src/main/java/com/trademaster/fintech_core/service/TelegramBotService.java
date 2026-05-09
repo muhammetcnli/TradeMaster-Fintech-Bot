@@ -48,49 +48,97 @@ public class TelegramBotService {
     }
 
     /**
+     * Listen for internal notification events and forward them to Telegram.
+     */
+    @org.springframework.context.event.EventListener
+    public void handleNotificationEvent(com.trademaster.fintech_core.telegram.event.TelegramNotificationEvent event) {
+        logger.info("Sending asynchronous notification to chatId: {}", event.getTelegramChatId());
+        sendMessage(event.getTelegramChatId(), event.getMessage());
+    }
+
+    /**
      * Main entry point for processing Telegram webhook updates.
-     * Flow: validate → extract user → parse command → dispatch → respond
+     * Flow: validate → extract user → parse command/callback → dispatch → respond
      */
     public void handleUpdate(TelegramUpdateDto update) {
-        if (update == null || update.getMessage() == null || update.getMessage().getChat() == null) {
+        if (update == null) return;
+
+        Long chatId;
+        String text;
+        Long telegramUserId;
+        String telegramUsername;
+
+        if (update.getMessage() != null && update.getMessage().getChat() != null) {
+            chatId = update.getMessage().getChat().getId();
+            text = update.getMessage().getText();
+            telegramUserId = extractTelegramUserId(update, chatId);
+            telegramUsername = extractTelegramUsername(update);
+        } else if (update.getCallbackQuery() != null) {
+            chatId = update.getCallbackQuery().getMessage().getChat().getId();
+            text = update.getCallbackQuery().getData();
+            telegramUserId = update.getCallbackQuery().getFrom().getId();
+            telegramUsername = update.getCallbackQuery().getFrom().getUsername();
+        } else {
             return;
         }
-
-        Long chatId = update.getMessage().getChat().getId();
-        String text = update.getMessage().getText();
 
         if (chatId == null || text == null || text.isBlank()) {
             return;
         }
 
-        logger.debug("Handling Telegram update - Chat ID: {}, Text: {}", chatId, text);
+        // Put user context into MDC for structured logging
+        org.slf4j.MDC.put("chatId", String.valueOf(chatId));
+        org.slf4j.MDC.put("telegramUserId", String.valueOf(telegramUserId));
+        org.slf4j.MDC.put("username", telegramUsername != null ? telegramUsername : "anonymous");
 
-        String[] parts = text.trim().split("\\s+");
-        String command = parts[0].toLowerCase();
-        String[] args = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
+        long startTime = System.currentTimeMillis();
+        try {
+            logger.info("Processing update: {}", text);
 
-        // Resolve Telegram user to system user
-        Long telegramUserId = extractTelegramUserId(update, chatId);
-        String telegramUsername = extractTelegramUsername(update);
-        User user = userService.findOrCreateTelegramUser(telegramUserId, telegramUsername);
+            // Normalize button text to commands
+            String commandText = normalizeCommand(text);
+            
+            // Basic validation
+            com.trademaster.fintech_core.telegram.util.TelegramValidator.validatePrompt(commandText);
 
-        logger.debug("Resolved user: {} (id: {}, telegram: {})", user.getUsername(), user.getId(), telegramUserId);
+            String[] parts = commandText.trim().split("\\s+");
+            String command = parts[0].toLowerCase();
+            String[] args = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
 
-        // Dispatch to handler
-        Optional<CommandHandler> handler = commandDispatcher.getHandler(command);
-        if (handler.isPresent()) {
-            try {
+            org.slf4j.MDC.put("command", command);
+
+            // Resolve Telegram user to system user
+            User user = userService.findOrCreateTelegramUser(telegramUserId, telegramUsername);
+
+            // Dispatch to handler
+            Optional<CommandHandler> handler = commandDispatcher.getHandler(command);
+            if (handler.isPresent()) {
                 String response = handler.get().handle(user, update, args);
                 if (response != null && !response.isBlank()) {
-                    sendMessage(chatId, response);
+                    Object replyMarkup = command.equals("/start") ? com.trademaster.fintech_core.telegram.util.KeyboardFactory.mainMenu() : null;
+                    sendMessage(chatId, response, replyMarkup);
                 }
-            } catch (Exception ex) {
-                logger.error("Error executing command {} for user {}: {}", command, user.getUsername(), ex.getMessage(), ex);
-                sendMessage(chatId, "❌ Error: " + ex.getMessage());
+            } else {
+                logger.warn("Unknown command received: {}", command);
+                sendMessage(chatId, "❓ " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Unknown command: ") + command + "\nType /help for available commands.");
             }
-        } else {
-            sendMessage(chatId, "Unknown command: " + command + "\nType /help for available commands.");
+        } catch (Exception ex) {
+            logger.error("Global Error: {}", ex.getMessage(), ex);
+            sendMessage(chatId, "⚠️ " + com.trademaster.fintech_core.telegram.util.TelegramFormatter.bold("Something went wrong.") + "\n" + ex.getMessage());
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            logger.info("Processed in {}ms", duration);
+            org.slf4j.MDC.clear();
         }
+    }
+
+    private String normalizeCommand(String text) {
+        if (text.contains("💰 Price")) return "/price";
+        if (text.contains("📊 Portfolio")) return "/portfolio";
+        if (text.contains("🔔 Alerts")) return "/alerts";
+        if (text.contains("📋 Watchlist")) return "/watchlist";
+        if (text.contains("❓ Help")) return "/help";
+        return text;
     }
 
     /**
@@ -117,11 +165,23 @@ public class TelegramBotService {
      * Send a text message to a Telegram chat via the Bot API.
      */
     public void sendMessage(Long chatId, String text) {
+        sendMessage(chatId, text, null);
+    }
+
+    /**
+     * Send a text message with optional keyboard/markup.
+     */
+    public void sendMessage(Long chatId, String text, Object replyMarkup) {
         String url = "https://api.telegram.org/bot" + botToken + "/sendMessage";
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("chat_id", chatId);
         payload.put("text", text);
+        payload.put("parse_mode", "HTML");
+
+        if (replyMarkup != null) {
+            payload.put("reply_markup", replyMarkup);
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -130,6 +190,15 @@ public class TelegramBotService {
             restTemplate.postForEntity(url, new HttpEntity<>(payload, headers), String.class);
         } catch (Exception ex) {
             logger.error("Failed to send Telegram message to chat {}: {}", chatId, ex.getMessage());
+            // Fallback: try sending without Markdown if it fails (often due to bad escaping)
+            if (payload.get("parse_mode") != null) {
+                payload.remove("parse_mode");
+                try {
+                    restTemplate.postForEntity(url, new HttpEntity<>(payload, headers), String.class);
+                } catch (Exception retryEx) {
+                    logger.error("Retry failed for chat {}: {}", chatId, retryEx.getMessage());
+                }
+            }
         }
     }
 }
